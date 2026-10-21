@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Алберто Бури: цикли и техники</title>
+<meta name="description" content="Циклите и техниките на Алберто Бури: катран, пемза, зебло, огън, стомана, пластмаса, пукнатини и Cellotex. Учебен материал, НХА, катедра „Сценография“.">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Warm paper for reading and projection; a dark variant follows the system setting. */
+  :root {
+    --bg: oklch(97.4% 0.008 78);
+    --surface: oklch(94.2% 0.011 76);
+    --line: oklch(86.5% 0.013 72);
+    --text: oklch(23% 0.014 50);
+    --muted: oklch(43% 0.016 55);
+    --faint: oklch(55% 0.013 60);
+    --accent: oklch(51% 0.165 31);
+    --accent-wash: oklch(51% 0.165 31 / .1);
+    --ochre: oklch(52% 0.085 68);
+    --bar-ochre: oklch(68% 0.1 75);
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --display: "Oswald", "IBM Plex Sans", sans-serif;
+    --measure: 68ch;
+    --ease: cubic-bezier(.25, 1, .5, 1);
+    --top: 60px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: oklch(17.5% 0.006 60);
+      --surface: oklch(21.5% 0.008 60);
+      --line: oklch(31% 0.01 60);
+      --text: oklch(92% 0.012 78);
+      --muted: oklch(73% 0.015 72);
+      --faint: oklch(59% 0.012 66);
+      --accent: oklch(64% 0.155 33);
+      --accent-wash: oklch(64% 0.155 33 / .16);
+      --ochre: oklch(75% 0.085 75);
+      --bar-ochre: oklch(70% 0.09 75);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--top) + 16px); }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 400 17px/1.65 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration-color: color-mix(in oklch, currentColor 35%, transparent); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: var(--accent); }
+  img { max-width: 100%; display: block; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+  /* Top bar: where am I, and where can I go */
+  .topbar { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .topbar-inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; height: var(--top); display: flex; align-items: center; gap: 20px; }
+  .brand { font: 500 16px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+  .crumb { font-size: 14px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .crumb b { color: var(--text); font-weight: 500; }
+  .topnav { margin-left: auto; display: flex; gap: 2px; }
+  .topnav a { font-size: 14px; color: var(--muted); text-decoration: none; padding: 7px 10px; border-radius: 4px; white-space: nowrap; }
+  .topnav a:hover { color: var(--text); background: var(--surface); }
+  .topnav a.active { color: var(--text); background: var(--surface); }
+  .progress { position: absolute; left: 0; bottom: -1px; height: 2px; background: var(--accent); width: 0; }
+
+  /* Intro */
+  .intro { padding: 64px 0 28px; }
+  .kicker { font: 500 13px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin: 0 0 16px; }
+  h1 { font: 500 clamp(38px, 6vw, 72px)/1.02 var(--display); text-transform: uppercase; margin: 0 0 20px; max-width: 16ch; }
+  .lead { font-size: clamp(18px, 2vw, 21px); line-height: 1.55; max-width: 52ch; margin: 0 0 14px; }
+  .byline { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* Contents: the map of the page */
+  .contents { padding: 28px 0 56px; }
+  .contents-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 16px; }
+  .label { font: 500 13px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin: 0; }
+  .also { font-size: 15px; color: var(--muted); margin: 0; }
+  .also a { color: var(--text); }
+  .index { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 22px 14px; }
+  @media (max-width: 980px) { .index { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .index a { display: block; text-decoration: none; }
+  .index .thumb { aspect-ratio: 4 / 3; background: var(--surface); overflow: hidden; border-radius: 3px; display: grid; place-items: center; color: var(--faint); font-size: 13px; }
+  .index img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }
+  .index a:hover img { transform: scale(1.05); }
+  .index .n { display: block; font-size: 12px; color: var(--faint); margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .index .nm { display: block; font: 500 17px/1.2 var(--display); text-transform: uppercase; margin-top: 2px; }
+  .index a:hover .nm { color: var(--accent); }
+  .index .yr { display: block; font-size: 13px; color: var(--muted); }
+
+  /* Sections */
+  section.block { padding: 64px 0; border-top: 1px solid var(--line); }
+  .sec-head { margin-bottom: 28px; }
+  .sec-num { font: 500 14px/1 var(--display); color: var(--accent); letter-spacing: .08em; display: block; margin-bottom: 8px; }
+  h2 { font: 500 clamp(28px, 3.4vw, 40px)/1.1 var(--display); text-transform: uppercase; margin: 0; }
+  .sec-intro { color: var(--muted); max-width: var(--measure); margin: 10px 0 0; }
+  .prose p { max-width: var(--measure); margin: 0 0 1em; }
+  .note { color: var(--muted); font-size: 15px; }
+  em.note { font-size: inherit; }
+  .warn { color: var(--ochre); }
+  .srcline { font-size: 14px; color: var(--faint); max-width: var(--measure); margin: 20px 0 0; }
+  .srcline a { color: var(--muted); }
+
+  /* Biography: a vertical run of years */
+  .bio { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; }
+  .years { list-style: none; margin: 0; padding: 0; }
+  .years li { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .years li:first-child { border-top: 0; padding-top: 0; }
+  .years .y { font: 500 16px/1.5 var(--display); color: var(--accent); font-variant-numeric: tabular-nums; }
+
+  /* Timeline */
+  .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 16px; }
+  .filters .label { margin-right: 6px; }
+  .chip { font: 500 14px/1 var(--sans); color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 99px; padding: 8px 14px; cursor: pointer; transition: background-color .2s var(--ease), color .2s var(--ease); }
+  .chip:hover { color: var(--text); }
+  .chip[aria-pressed="true"] { color: var(--text); background: var(--accent-wash); border-color: var(--accent); }
+  .timeline-scroll { overflow-x: auto; background: var(--surface); border-radius: 4px; }
+  .timeline { min-width: 700px; padding: 18px 20px 10px; }
+  .tl-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; height: 32px; cursor: pointer; transition: opacity .3s var(--ease); }
+  .tl-row:hover .tl-label { color: var(--accent); }
+  .tl-row.dim { opacity: .25; }
+  .tl-label { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 12px; }
+  .tl-track { position: relative; height: 100%; }
+  .tl-track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dotted var(--line); }
+  .bar { position: absolute; top: 10px; height: 12px; border-radius: 2px; background: var(--accent); }
+  .bar.fade-end { background: linear-gradient(90deg, var(--accent) 55%, transparent); }
+  .bar.fade-start { background: linear-gradient(90deg, transparent, var(--accent) 35%); }
+  .bar.ochre { background: var(--bar-ochre); }
+  .bar-arrow { position: absolute; top: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .tl-axis { display: grid; grid-template-columns: 160px 1fr; margin-top: 6px; }
+  .tl-axis .ticks { position: relative; height: 22px; border-top: 1px solid var(--line); }
+  .tl-axis span { position: absolute; top: 4px; transform: translateX(-50%); font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+  /* Cycles */
+  .cycles { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 56px; align-items: start; }
+  .sidenav { position: sticky; top: calc(var(--top) + 24px); }
+  .sidenav ol { list-style: none; margin: 10px 0 0; padding: 0; }
+  .sidenav a { display: grid; grid-template-columns: 26px 1fr; padding: 5px 8px; border-radius: 4px; text-decoration: none; color: var(--muted); font-size: 14px; line-height: 1.35; }
+  .sidenav a .k { color: var(--faint); font-variant-numeric: tabular-nums; }
+  .sidenav a .y { grid-column: 2; font-size: 12px; color: var(--faint); }
+  .sidenav a:hover { color: var(--text); background: var(--surface); }
+  .sidenav a.active { color: var(--text); background: var(--accent-wash); }
+  .sidenav a.active .k { color: var(--accent); }
+  .sidenav li.hidden { display: none; }
+  .cyc-intro p { max-width: var(--measure); margin: 0 0 12px; }
+
+  article.cycle { padding: 56px 0 8px; }
+  article.cycle + article.cycle { border-top: 1px solid var(--line); }
+  article.cycle[hidden] { display: none; }
+  .cyc-head { margin-bottom: 22px; }
+  .cyc-num { font-size: 13px; color: var(--faint); font-variant-numeric: tabular-nums; }
+  .cycle h3 { font: 500 clamp(28px, 3.2vw, 38px)/1.08 var(--display); text-transform: uppercase; margin: 4px 0 6px; }
+  .cyc-sub { font-size: 16px; color: var(--muted); margin: 0 0 14px; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; margin: 0; font-size: 15px; max-width: var(--measure); }
+  .facts dt { color: var(--faint); }
+  .facts dd { margin: 0; }
+  .facts .tg { color: var(--ochre); }
+
+  .gallery { display: grid; gap: 24px; margin: 0 0 26px; }
+  .gallery.two { grid-template-columns: 1fr 1fr; align-items: start; }
+  figure { margin: 0; }
+  figure button { display: block; width: 100%; padding: 0; border: 0; background: var(--surface); cursor: zoom-in; border-radius: 3px; overflow: hidden; position: relative; }
+  figure img { width: 100%; height: auto; max-height: 540px; object-fit: contain; background: var(--surface); }
+  figure .zoom { position: absolute; right: 8px; bottom: 8px; font-size: 12px; background: var(--bg); color: var(--muted); padding: 3px 8px; border-radius: 3px; opacity: 0; transition: opacity .25s var(--ease); }
+  figure button:hover .zoom, figure button:focus-visible .zoom { opacity: 1; }
+  figcaption { font-size: 14px; line-height: 1.5; color: var(--muted); margin-top: 10px; max-width: var(--measure); }
+  figcaption em { color: var(--text); }
+  .noimg { background: var(--surface); border-radius: 3px; padding: 20px 22px; color: var(--muted); font-size: 15px; margin-bottom: 26px; max-width: var(--measure); }
+  .quote { margin: 4px 0 1.1em; max-width: 56ch; font-size: 19px; line-height: 1.5; }
+  .quote p { margin: 0; font-style: italic; text-indent: -.45em; }
+  .quote cite { display: block; font-style: normal; font-size: 14px; color: var(--muted); margin-top: 6px; }
+
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin: 28px 0 0; padding-top: 16px; font-size: 14px; }
+  .pager a { text-decoration: none; color: var(--muted); max-width: 48%; }
+  .pager a:hover { color: var(--accent); }
+  .pager a span { display: block; font: 500 16px/1.3 var(--display); text-transform: uppercase; color: var(--text); }
+  .pager a:hover span { color: var(--accent); }
+  .pager .next { text-align: right; margin-left: auto; }
+
+  /* Neighbors: one row per author */
+  .rows { margin: 0; padding: 0; list-style: none; }
+  .rows li { display: grid; grid-template-columns: 220px minmax(0, 1fr) minmax(0, 1.1fr); gap: 8px 32px; padding: 22px 0; border-top: 1px solid var(--line); }
+  .rows h3 { font: 500 20px/1.2 var(--display); text-transform: uppercase; margin: 0; }
+  .rows .dates { display: block; font-size: 13px; color: var(--faint); margin-top: 2px; }
+  .rows .with { display: block; font-size: 13px; color: var(--ochre); margin-top: 8px; }
+  .rows p { margin: 0; font-size: 15px; }
+  .rows p + p { margin-top: 0; }
+  .rows .diff { color: var(--muted); }
+
+  /* Questions */
+  .questions { list-style: none; counter-reset: q; margin: 0; padding: 0; max-width: 820px; }
+  .questions li { counter-increment: q; display: grid; grid-template-columns: 52px 1fr; padding: 18px 0; border-top: 1px solid var(--line); font-size: clamp(18px, 1.8vw, 21px); line-height: 1.5; }
+  .questions li:first-child { border-top: 0; }
+  .questions li::before { content: counter(q); font: 500 30px/1.1 var(--display); color: var(--accent); }
+
+  /* Sources */
+  .sources { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .sources ul { margin: 12px 0 0; padding: 0 0 0 18px; font-size: 15px; }
+  .sources li { margin-bottom: 8px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 56px; color: var(--faint); font-size: 13px; }
+
+  .totop { position: fixed; right: 16px; bottom: 16px; z-index: 15; font: 500 14px/1 var(--sans); color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 10px 14px; text-decoration: none; opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+  .totop.show { opacity: 1; pointer-events: auto; transform: none; }
+
+  /* Image viewer */
+  .lb { position: fixed; inset: 0; z-index: 50; background: oklch(14% 0.005 60 / .97); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 56px 56px 24px; color: oklch(92% 0.012 78); }
+  .lb.open { display: flex; }
+  .lb img { max-width: 100%; max-height: calc(100vh - 180px); object-fit: contain; }
+  .lb-cap { font-size: 14px; max-width: 760px; text-align: center; margin-top: 16px; line-height: 1.5; color: oklch(76% 0.014 72); }
+  .lb-cap em { color: oklch(94% 0.01 78); }
+  .lb-cap a { color: inherit; }
+  .lb button { position: absolute; background: none; border: 0; color: inherit; font: 400 34px/1 var(--sans); cursor: pointer; padding: 12px; opacity: .7; }
+  .lb button:hover { opacity: 1; }
+  .lb-close { top: 6px; right: 10px; }
+  .lb-prev { left: 4px; top: 50%; transform: translateY(-50%); }
+  .lb-next { right: 4px; top: 50%; transform: translateY(-50%); }
+  .lb-count { position: absolute; top: 20px; left: 20px; font-size: 13px; opacity: .6; }
+
+  @media (max-width: 980px) {
+    .bio { grid-template-columns: 1fr; gap: 32px; }
+    .cycles { grid-template-columns: 1fr; gap: 0; }
+    .sidenav { display: none; }
+    .rows li { grid-template-columns: 1fr; gap: 6px; }
+    .sources { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 760px) {
+    .topnav { display: none; }
+    .crumb { margin-left: auto; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .intro { padding-top: 40px; }
+    .index { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+    .gallery.two { grid-template-columns: 1fr; }
+    .years li { grid-template-columns: 78px 1fr; gap: 12px; }
+    .questions li { grid-template-columns: 40px 1fr; }
+    .lb { padding: 56px 8px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+  @media print {
+    .topbar, .sidenav, .filters, .lb, .totop, .pager, .zoom { display: none !important; }
+    article.cycle[hidden] { display: block !important; }
+    section.block { break-inside: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">Алберто Бури</a>
+    <div class="crumb" id="crumb" aria-live="polite"></div>
+    <nav class="topnav" aria-label="Раздели">
+      <a href="#bio">Биография</a>
+      <a href="#timeline">Хронология</a>
+      <a href="#cycles">Цикли</a>
+      <a href="#neighbors">Съседи</a>
+      <a href="#questions">Въпроси</a>
+      <a href="#sources">Източници</a>
+    </nav>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+
+    <div class="intro">
+      <p class="kicker">Учебен материал · живопис</p>
+      <h1>Алберто Бури: цикли и техники</h1>
+      <p class="lead">Алберто Бури (1915–1995) работи направо с материала: шие го, гори го, заварява го, топи го или го оставя да се напука. Всеки негов цикъл е посветен на една такава операция.</p>
+      <p class="byline">ас. Борис Цанков · НХА, катедра „Сценография“ · 21.10.2026</p>
+    </div>
+
+    <nav class="contents" aria-labelledby="contents-label">
+      <div class="contents-head">
+        <h2 class="label" id="contents-label">Единадесетте цикъла</h2>
+        <p class="also">Също на страницата: <a href="#bio">биография</a>, <a href="#timeline">хронология</a>, <a href="#neighbors">съседи</a>, <a href="#questions">въпроси</a>, <a href="#sources">източници</a>.</p>
+      </div>
+      <ol class="index" id="index"></ol>
+    </nav>
+
+    <!-- 01 Биография -->
+    <section class="block" id="bio" data-name="Биография">
+      <div class="sec-head">
+        <span class="sec-num">01</span>
+        <h2>Кратка биография</h2>
+      </div>
+      <div class="bio">
+        <ol class="years">
+          <li><span class="y">1915</span><span>Роден на 12 март в Чита ди Кастело, Умбрия. Баща му е търговец на вино, майка му е начална учителка.</span></li>
+          <li><span class="y">1940</span><span>Завършва медицина. Служи като военен лекар.</span></li>
+          <li><span class="y">1943–1946</span><span>Пленен от съюзниците в Тунис през пролетта на 1943 г. и изпратен в лагер за военнопленници в Херефорд, Тексас. Там започва да рисува. Към 1945 г. материалите в лагера свършват и той рисува върху празни зеблени чували от кухнята.</span></li>
+          <li><span class="y">1946</span><span>Връща се в Италия, установява се в Рим и се отказва от медицината завинаги. Няма художествено образование.</span></li>
+          <li><span class="y">1947–1948</span><span>Първи самостоятелни изложби в Galleria La Margherita, Рим. След кратък престой в Париж (1948) минава към абстракция с пемза, катран и други нехудожествени материали.</span></li>
+          <li><span class="y">1950-те</span><span>Признание в САЩ чрез Джеймс Джонсън Суини, директор на Гугенхайм. Суини пише и първата монография за него (1955).</span></li>
+          <li><span class="y">1963–1991</span><span>Прекарва зимите в Калифорния. Пукнатата земя на Долината на смъртта по-късно ще стане отправна точка за Cretti.</span></li>
+          <li><span class="y">1978</span><span>Основава Fondazione Palazzo Albizzini Collezione Burri в родния си град. Колекцията е открита през 1981 г., а през 1989 г. фондацията придобива бившите сушилни за тютюн (Ex Seccatoi del Tabacco), боядисани изцяло в черно по негово желание.</span></li>
+          <li><span class="y">1995</span><span>Умира в Ница на 13 февруари.</span></li>
+        </ol>
+        <div class="prose">
+          <p>Бури сам отказва биографичния прочит. Той говори за форма, пространство и пропорция, за „верига от сили и напрежения“ и за „архитектонична структура“.</p>
+          <p>С приятели редовно е карал колело половин час до <em>Madonna del Parto</em> на Пиеро дела Франческа, и кураторите виждат ренесансовите пропорции под привидно случайните му повърхности.</p>
+          <p>Връзката между раните, шевовете и лекарската му професия е прочит на критиците. Самият Бури не го подкрепя.</p>
+          <p class="srcline">Източници: <a href="https://fondazioneburri.org/en/?p=581">Fondazione Burri, биография</a>; <a href="https://www.guggenheim.org/wp-content/uploads/2019/12/guggenheim-teaching-materials-alberto-burri.pdf">Guggenheim, Teacher Resource Unit, 2015</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 Хронология -->
+    <section class="block" id="timeline" data-name="Хронология">
+      <div class="sec-head">
+        <span class="sec-num">02</span>
+        <h2>Хронология на циклите</h2>
+        <p class="sec-intro">Всеки ред води до своя цикъл. Ленти с избелял край означават приблизителни години: източниците дават „от…“ или „1970-те“.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Покажи цикли по операция">
+        <span class="label">Покажи</span>
+        <button class="chip" data-filter="all" aria-pressed="true">Всички</button>
+        <button class="chip" data-filter="fire" aria-pressed="false">Огън</button>
+        <button class="chip" data-filter="sew" aria-pressed="false">Шев</button>
+        <button class="chip" data-filter="mix" aria-pressed="false">Смес</button>
+        <button class="chip" data-filter="crack" aria-pressed="false">Пукнатина</button>
+        <button class="chip" data-filter="relief" aria-pressed="false">Релеф</button>
+        <button class="chip" data-filter="scratch" aria-pressed="false">Драскане</button>
+      </div>
+      <div class="timeline-scroll">
+        <div class="timeline" id="tl"></div>
+      </div>
+      <p class="note" style="margin-top:12px">Филтърът действа и върху описанията на циклите по-долу.</p>
+    </section>
+
+    <!-- 03 Цикли -->
+    <section class="block" id="cycles" data-name="Цикли">
+      <div class="sec-head">
+        <span class="sec-num">03</span>
+        <h2>Цикли и техники</h2>
+      </div>
+      <div class="cycles">
+        <nav class="sidenav" aria-label="Цикли">
+          <p class="label">Цикли</p>
+          <ol id="sidenav"></ol>
+        </nav>
+        <div>
+          <div class="cyc-intro">
+            <p>Бури работи в цикли: всеки е един материал и една операция, изследвани в десетки варианти. От 1952 г. нататък свързващото вещество във всички цикли е поливинилацетатът, PVA (италианската марка е Vinavil, близка до бялото лепило „Елмер“). Той служи за лепене, лак, текстура и за имитация на засъхнали телесни течности.</p>
+            <p class="note">Годините са по Гугенхайм, Помпиду и фондацията. Различните източници ги дават с отклонение от една-две години.</p>
+          </div>
+
+          <article class="cycle" id="catrami" data-tags="mix scratch">
+            <div class="cyc-head"></div>
+            <div class="gallery">
+              <figure id="img-catrame">
+                <button><img src="img/01_catrame_II_1949.jpg" alt="Catrame II, 1949" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Catrame II</em>, 1949. Катран върху платно, 43,5 × 50,5 cm. Ватикански музеи, Колекция за съвременно изкуство (<a href="https://www.museivaticani.va/content/museivaticani/en/collezioni/musei/collezione-d_arte-contemporanea/sala-24--il-secondo-dopoguerra-in-italia/alberto-burri--natura-morta--catrame-ii.html">страница</a>).</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>След Париж (1948) Бури вижда колажите на Миро и плътните, с катран, картини на Дюбюфе. По същото време е и „полиматериалното“ изкуство на футуристите (<em>arte polimaterica</em>). Той започва да смесва пигмента с масло и катран, с винилово лепило и цементит. Ватиканът нарича <em>Catrame II</em> „един от първите примери“ на това търсене.</p>
+              <p>Основата е грундирано платно. Катранът се нанася с шпатула като плътна, лъскава черна маса и е едновременно цвят и материал. Отгоре се полага по-светъл слой охра, смесена с пемза или пясък, който се напуква при съхнене. В черните полета Бури издрасква линии и решетки до долния слой. Така в готовата работа се срещат две фактури: черното е лъскаво и тежко, охрата е суха и напукана. <em class="note">(Описанието е моя реконструкция по материалите и изображението.)</em></p>
+            </div>
+          </article>
+
+          <article class="cycle" id="muffe" data-tags="mix">
+            <div class="cyc-head"></div>
+            <div class="gallery">
+              <figure id="img-muffa">
+                <button><img src="img/02_muffa_1952.jpg" alt="Mold (Muffa), 1952" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Mold (Muffa)</em>, 1952. Масло, синтетичен полимер, пемза и металическа боя върху платно, 72,1 × 80 cm. Art Institute of Chicago, 2002.590 (<a href="https://www.artic.edu/artworks/159630">страница</a>).</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>По думите на Чикагския институт това е серия, в която Бури изследва пемзата. Пореста, гранулирана, тя дава „материална реалност без реализъм“.</p>
+              <p>Пемзата се смесва с боята и синтетичната смола в различни пропорции. Масата се разлива или нанася върху бял грунд и при съхнене образува шуплеста кора, подобна на плесен. Отгоре се полагат черни и червени акценти. В готовата работа най-силно се вижда границата между гладкото бяло и грапавото кафяво. „Плесента“ се получава от самата смес. <em class="note">(Реконструкция по описа на материалите.)</em></p>
+            </div>
+          </article>
+
+          <article class="cycle" id="gobbi" data-tags="relief">
+            <div class="cyc-head"></div>
+            <div class="noimg"><em>Rosso gobbo</em>, 1953. Акрил, плат и смола върху платно, метален прът отзад, 56,5 × 85 cm. Частна колекция, Рим (по етикета от ретроспективата в Гугенхайм, 2015). <span class="warn">⚠ Без изображение: не открих творба от серията в музейна колекция.</span></div>
+            <div class="prose">
+              <p>Gobbi са първото чупене на равнината. Зад платното, между него и подрамката, Бури поставя пръчки, клони или метален прът. Те изтласкват платното напред и картината получава „гърбица“.</p>
+              <p>Платното се опъва по-хлабаво от обикновено, за да може прътът отзад да го издуе. Издутината се покрива с боя, смола или плат и се втвърдява, така че формата идва от релефа, без рисуване. Тя хвърля истинска сянка, която се променя с осветлението в залата. Бури се връща към Gobbi и през 1968–1969 г. (по <a href="https://mazzoleniart.com/wp-content/uploads/2017/06/Mazzoleni-Masterpiece-_Press-Release_20-June_Final.pdf">Mazzoleni</a>).</p>
+            </div>
+          </article>
+
+          <article class="cycle" id="sacchi" data-tags="sew">
+            <div class="cyc-head"></div>
+            <div class="gallery">
+              <figure id="img-sacco">
+                <button><img src="img/03_grande_sacco_1952.jpg" alt="Grande sacco, 1952" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Grande sacco</em>, 1952. Зебло, плат, конец и акрил върху платно, 150 × 250 cm. Galleria nazionale d'arte moderna e contemporanea, Рим.</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>Зеблото е най-характерният материал на Бури. В следвоенна Италия в такива чували идват боб, зърно и захар от помощите. В армията от зебло са палатките, чувалите с пясък и маскировъчните мрежи. Бури оставя видими печатните букви от фабриката. В долния ляв ъгъл на <em>Grande sacco</em> той рисува инициалите си така, че да приличат на тях.</p>
+              <p>Използваните чували се разпарят, перат или остават мръсни и се режат на парчета. Бури ги съшива на ръка и с машина: с корда, конец, канап и дори с разплетените нишки на самото зебло. Съшитото се опъва на подрамка, често върху черен или червен плат, който прозира през дупките. Дупките се кърпят с лепенки, ръбовете се лепят и лакират с PVA, а отделни полета се боядисват с акрил или масло.</p>
+            </div>
+            <div class="gallery two">
+              <figure id="img-strappo">
+                <button><img src="img/04_lo_strappo_1952.jpg" alt="Lo strappo, 1952" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Lo strappo</em> (Разкъсването), 1952. Масло, плат, конец, пемза и Vinavil, 87 × 58 cm. Collezione Beatrice Monti della Corte.</figcaption>
+              </figure>
+              <figure id="img-sacking">
+                <button><img src="img/05_sacking_and_red_1954.jpg" alt="Sacking and Red, 1954" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Sacking and Red</em>, 1954. Зебло и акрил върху платно, 86,4 × 100,3 cm. Tate, T00787 (<a href="https://www.tate.org.uk/art/artworks/burri-sacking-and-red-t00787">страница</a>). <span class="warn">⚠ Техниката и размерите са по вторични записи на колекцията, не по самата страница на Тейт.</span></figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p><em>Lo strappo</em> е от Bianchi, белите. При тях Бури шие ленено бельо (<em>biancheria</em>: покривки, чаршафи, нощници) на пачуърк и полага бялото на пластове. Понякога излива боята направо от кутията и я заглажда с ръце. Работи с четки, ножове, шпатули и мистрии, „като работник“.</p>
+              <p>Според Гугенхайм основата на <em>Lo strappo</em> е намерено мръсно ленено платно с дълго вертикално разкъсване. Бури го зашнурова с боядисана в зелено корда, а в двата края на раната зашива с машина правоъгълни ленти плат. Шевовете запечатва с лъскаво лепило и добавя бяла, черна и червена боя. Отзад покрива разкъсването с дълга лента лен и пришива още две ленти, така че картината е работена и от двете страни, като предмет.</p>
+              <p>Линиите в Sacchi са конци, ръбове и кръпки. Червеното е положено плоско, като контраст на грапавото зебло. Шевовете напомнят хирургически, но самият Бури отказва този прочит.</p>
+            </div>
+          </article>
+
+          <article class="cycle" id="combustioni" data-tags="fire">
+            <div class="cyc-head"></div>
+            <div class="prose">
+              <p>Огънят е основното оръдие на Бури от средата на 50-те до 60-те години. Помпиду обобщава логиката: огънят, за разлика от четката, работи чрез отнемане на материя. С едно движение той прави дупка, ръб и цвят.</p>
+              <p>Първите Combustioni от 1953–1954 г. са остатъци от изгорена хартия, залепени върху хартия, и горенето в тях още е украса (Помпиду). При един от ранните опити в средата на 50-те Бури запалва ъгъла на лист и оставя пепелта да пада върху повърхност, покрита с мокра пластмаса (Гугенхайм). След това гори зебло и дърво с горелка, а накрая и пластмаса (виж <a href="#plastiche">Plastiche</a>). Ръбът на изгорялото е кафяв, черен и навит и е единственото „рисувано“ нещо в работата.</p>
+              <p class="note">Изображения на горене виж при <a href="#legni">Legni</a> и <a href="#plastiche">Plastiche</a>.</p>
+            </div>
+          </article>
+
+          <article class="cycle" id="legni" data-tags="fire">
+            <div class="cyc-head"></div>
+            <div class="gallery">
+              <figure id="img-legno">
+                <button><img src="img/06_legno_e_bianco_1956.jpg" alt="Legno e bianco 1, 1956" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Legno e bianco 1</em>, 1956. Фурнир, горене, акрил и Vinavil върху платно, 87,7 × 159 cm. Solomon R. Guggenheim Museum, Ню Йорк, 57.1463 (<a href="https://www.guggenheim.org/artwork/718">страница</a>).</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>Тънки листове фурнир се лепят с PVA и се приковават върху платно; по горния ръб се виждат гвоздеите. Горелката пали фурнира на места. Листът се цепи по жилката и се извива, а горенето оставя черни петна. Под фурнира или в дупките се полага бял акрил, който се вижда като тесни вертикални ивици там, където дървото се е разтворило. Композицията следва линиите, по които фурнирът се цепи от топлината: Бури избира къде да запали, но дървото решава как да се разтвори.</p>
+              <p><em class="note">(Стъпките са реконструкция по материалите в етикета и по изображението.)</em> Подобна работа е <em>Combustione legno</em>, 1957: фурнир, хартия, горене, акрил и Vinavil върху платно, 149,5 × 99 cm, частна колекция.</p>
+            </div>
+          </article>
+
+          <article class="cycle" id="ferri" data-tags="fire sew">
+            <div class="cyc-head"></div>
+            <div class="gallery two">
+              <figure id="img-ferro">
+                <button><img src="img/08_grande_ferro_M4_1959.jpg" alt="Grande ferro M 4, 1959" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Grande ferro M 4</em>, 1959. Заварена ламарина и гвоздеи върху дървена рамка, 199,8 × 189,9 cm. Solomon R. Guggenheim Museum, Ню Йорк, 60.1572 (<a href="https://www.guggenheim.org/artwork/719">страница</a>).</figcaption>
+              </figure>
+              <figure id="img-welding">
+                <button><img src="img/07_burri_welding_1958.jpg" alt="Бури заварява в ателието си, Рим, ок. 1958" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption>Бури заварява в ателието си, Рим, ок. 1958. Снимка: Marvin P. Lazarus, Rudi Blesh Papers, Archives of American Art, Smithsonian Institution.</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>При Ferri огънят замества четката за заварките (Помпиду).</p>
+              <p>Според Гугенхайм Бури купува листове студеновалцувана стомана направо от завода и ги реже с горелка или с ножици за метал. Свързва ги със заваръчен електрод, а перлените заварки и дупките изглеждат като шевовете в Sacchi. Някои ръбове огъва в остри издатини.</p>
+              <p>Горелката оцветява стоманата, а Бури мени нюанса с температурата, количеството кислород и разстоянието до пламъка. Сините, сламените и кафявите тонове по стоманата са от огъня, без боя. Гърбът се грундира в червено срещу ръжда и червеното прозира през срезовете. Накрая листовете се приковават върху плоска дървена основа и се окачват на стена като картина.</p>
+              <p>По-ранните Ferri са по-близо до колажа: Бури добавя консерви, тръби, пръти и отпадъци. Той оставя и фабричните маркировки, и естествената корозия.</p>
+            </div>
+          </article>
+
+          <article class="cycle" id="plastiche" data-tags="fire">
+            <div class="cyc-head"></div>
+            <div class="gallery two">
+              <figure id="img-rosso">
+                <button><img src="img/09_rosso_plastica_M2_1962.jpg" alt="Rosso plastica M 2, 1962" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Rosso plastica M 2</em>, 1962. Пластмаса (PVC и PE) и горене върху черен плат, 120 × 180 cm. Частна колекция.</figcaption>
+              </figure>
+              <figure id="img-plastica">
+                <button><img src="img/10_plastica_1964.jpg" alt="Plastica, 1964" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Plastica</em> (Combustione plastica), 1964. Овъглен поливинилхлорид (PVC), 150,5 × 251 cm. Centre Pompidou, AM 1977-555, дар от художника, 1978 (<a href="https://www.centrepompidou.fr/fr/ressources/oeuvre/cByXao">страница</a>).</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>По описанието на Гугенхайм <em>Rosso plastica M 2</em> има три слоя. Долу е черен плат, опънат на подрамка. Върху него е червено пластмасово фолио, разтопено с горелка и обработено с шила, четки и други инструменти. Най-отгоре е прозрачно фолио, опънато и омекотено с нисък пламък.</p>
+              <p>В <em>Plastica</em> пластмасата е бяла и прозрачна, опъната върху метална рамка, без платно отдолу. Огънят прави дупки с почернели, навити ръбове. Празнотата им показва дебелината на материала. Помпиду отбелязва, че спрямо Sacchi серията е по-радикална: няма фон и няма никаква боя.</p>
+            </div>
+            <blockquote class="quote"><p>„Отдавна искам да изследвам как огънят поглъща, да разбера природата на горенето.“</p><cite>Бури, 1955</cite></blockquote>
+            <div class="prose">
+              <p>Дупката е форма, която отваря свиването на самия материал, затова ръбът ѝ е мек и подгънат.</p>
+            </div>
+          </article>
+
+          <article class="cycle" id="cretti" data-tags="mix crack">
+            <div class="cyc-head"></div>
+            <div class="gallery">
+              <figure id="img-bcretto">
+                <button><img src="img/11_grande_bianco_cretto_1974.jpg" alt="Grande bianco cretto, 1974" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Grande bianco cretto</em>, 1974. Акрил и PVA върху Celotex, 126 × 201 cm. Частна колекция.</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>Бури предизвиква напукване (кракелюр) още от 1954 г., в Bianchi. В Cretti то става основният метод. Поводът е напуканата земя в Долината на смъртта.</p>
+            </div>
+            <blockquote class="quote"><p>„Идеята дойде оттам, но в картината стана нещо друго. Исках само да покажа енергията на повърхността.“</p><cite>Бури</cite></blockquote>
+            <div class="prose">
+              <p>Сместа е изобретение на Бури. Според Гугенхайм тя е от пигмент, PVA и вода, а според Помпиду от пръст, каолин, лепило и цинкова бяла или черен акрил. Дебел слой се разстила с мастихар или шпатула върху плоскост. Пукнатините се образуват сами при съхнене, което може да отнеме седмица и повече, а Бури ги насочва с ръце или с инструменти. Когато реши, че е готово, нанася фиксатор и процесът спира.</p>
+              <p>Режимът е случай плюс контрол, или по неговите думи „неуравновесено равновесие“. Моя хипотеза: големината на клетката се управлява с дебелината на слоя. Дебелият слой дава едри клетки, тънкият дава ситна мрежа. Това се проверява лесно с проба в час.</p>
+              <p>Формата на <em>Grande bianco cretto</em> е люнета. Гугенхайм я сравнява с ренесансовите олтари, например с <em>Polittico della Misericordia</em> на Пиеро дела Франческа. Хаосът на пукнатините е затворен в точна геометрия.</p>
+            </div>
+            <div class="gallery">
+              <figure id="img-ncretto">
+                <button><img src="img/12_grande_cretto_nero_1977.jpg" alt="Grande cretto nero, 1977" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Grande cretto nero</em>, 1977. 149,5 × 249,5 cm. Centre Pompidou, AM 1977-554, дар от художника, 1978 (<a href="https://www.centrepompidou.fr/fr/ressources/oeuvre/cEnX4Mb">страница</a>). <span class="warn">⚠ Помпиду дава техниката като „обгорена пръст и винил върху Isorel“ (фазер). Етикетът от ретроспективата в Гугенхайм дава „акрил и PVA върху Celotex“. Двата записа не съвпадат.</span></figcaption>
+              </figure>
+            </div>
+          </article>
+
+          <article class="cycle" id="grande-cretto" data-tags="crack">
+            <div class="cyc-head"></div>
+            <div class="gallery">
+              <figure id="img-gibellina">
+                <button><img src="img/13_grande_cretto_gibellina.jpg" alt="Grande Cretto, Gibellina" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Cretto di Burri</em>, Джибелина, Сицилия. Снимка: Davide Mauro, <a href="https://commons.wikimedia.org/wiki/File:Cretto_di_Burri_02.JPG">Wikimedia Commons</a>, CC BY-SA 4.0.</figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>Grande Cretto пренася техниката на Cretti в мащаба на цял град. Земетресението във валейата Беличе през януари 1968 г. събаря старата Джибелина. През 1980 г. кметът Лудовико Корао кани художници в новия град. Бури избира да работи върху руините на стария.</p>
+              <p>Руините се покриват с бял бетон, събран в блокове и държан от арматурна мрежа. Блоковете са високи най-много 160 cm, а пукнатините между тях следват главните улици на стария град и по тях се ходи. Работата започва през 1985 г. и спира през 1989 г. при 66 000 m². Завършена е през 2015 г., за стогодишнината от рождението на Бури, по неговия проект. Крайната площ е 86 000 m².</p>
+              <p>В картините пукнатините се образуват сами при съхнене. Тук са проектирани по плана на изчезналия град.</p>
+            </div>
+          </article>
+
+          <article class="cycle" id="cellotex" data-tags="scratch">
+            <div class="cyc-head"></div>
+            <div class="gallery">
+              <figure id="img-cellotex">
+                <button><img src="img/14_cellotex_LA86_1986.jpg" alt="Cellotex LA 86, 1986" loading="lazy"><span class="zoom">Увеличи</span></button>
+                <figcaption><em>Cellotex LA 86</em>, 1986. Акрил върху фазер. Solomon R. Guggenheim Museum, Ню Йорк, 86.3445, дар от Минса Крейг, 1986 (<a href="https://www.guggenheim.org/artwork/720">страница</a>). <span class="warn">⚠ На страницата размерите в инчове (50 × 76⅛ in, ок. 127 × 193 cm) не съвпадат със сантиметрите (93 × 127 cm).</span></figcaption>
+              </figure>
+            </div>
+            <div class="prose">
+              <p>Celotex е индустриална топло- и звукоизолационна плоскост от пресовани дървесни влакна. Бури я ползва като основа от самото начало, под другите слоеве (така е и при Cretti). През 70-те години плоскостта сама става лицето на картината.</p>
+              <p>Според фондацията Бури гравира и драска плоскостта с резец и на места обелва най-горния филм, за да открие грапавите влакна отдолу. Други полета боядисва плътно и равно с акрил.</p>
+              <p>Късните работи са в цикли, които „могат да се разберат само цялостно“: <em>Il Viaggio</em> (1979), <em>Orti</em> (1980), <em>Sestante</em> (1983), <em>Annottarsi</em> (1985–1987), <em>Metamorfotex</em> и <em>Il Nero e l'Oro</em> (1992–1993, по десет големи работи върху Cellotex). Голяма част от тях е в Ex Seccatoi del Tabacco.</p>
+              <p>В <em>Cellotex LA 86</em> плътната черна и червена боя стои директно до суровата кафява плоскост, а линиите между плоскостите са част от рисунката. В късните работи операциите са по-тихи: драскане, обелване и боя вместо огън.</p>
+            </div>
+          </article>
+
+          <p class="srcline">Източници за циклите: <a href="https://www.guggenheim.org/wp-content/uploads/2019/12/guggenheim-teaching-materials-alberto-burri.pdf">Guggenheim, Teacher Resource Unit</a>; <a href="https://www.centrepompidou.fr/fr/ressources/oeuvre/cByXao">Centre Pompidou, Plastica</a>; <a href="https://www.centrepompidou.fr/fr/ressources/oeuvre/cEnX4Mb">Centre Pompidou, Grande cretto nero</a>; <a href="https://www.guggenheim.org/artwork/artist/alberto-burri">Guggenheim, страница на автора</a>; <a href="https://fondazioneburri.org/en/external-works/grande-cretto-gibellina/">Fondazione Burri, Grande Cretto</a>; <a href="https://fondazioneburri.org/en/fondazione-palazzo-albizzini-collezione-burri/ex-seccatoi-del-tabacco/">Fondazione Burri, Ex Seccatoi</a>; етикети от ретроспективата 2015 (<a href="https://studiointernational.com/images/articles/b/burri-alberto-2015/AlbertoBurri-captions.txt">Studio International</a>).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 Съседи -->
+    <section class="block" id="neighbors" data-name="Съседи">
+      <div class="sec-head">
+        <span class="sec-num">04</span>
+        <h2>Съседи</h2>
+        <p class="sec-intro">Трима автори ползват същите операции с друга цел.</p>
+      </div>
+      <ul class="rows">
+        <li>
+          <div><h3>Пиеро Манцони</h3><span class="dates">1933–1963</span><span class="with">↔ Bianchi, Cretti</span></div>
+          <p><a href="https://www.moma.org/collection/works/78364"><em>Achrome</em></a>, 1958–1959. Каолин върху платно, 41 × 61 cm. MoMA, 5.1999.</p>
+          <p class="diff">Същият каолин, без рани и шевове. Манцони стига до бялото чрез отказ от жест, а Бури чрез следите на материята. <em>(Мой прочит.)</em></p>
+        </li>
+        <li>
+          <div><h3>Салваторе Скарпита</h3><span class="dates">1919–2007</span><span class="with">↔ Sacchi, Gobbi</span></div>
+          <p><em>Moby Dick (Extramural-Composition n. 3)</em>, 1958, „превързана“ картина. <span class="warn">⚠ Колекцията не е потвърдена.</span></p>
+          <p class="diff">Платното се реже на ленти, навива се около рамката и се покрива с масло. Превръзка вместо шев (<a href="https://momus.ca/2014/10/15/an-italian-futurist-out-of-step-with-the-rest-salvatore-scarpitta/">Momus, 2014</a>).</p>
+        </li>
+        <li>
+          <div><h3>Тийстър Гейтс</h3><span class="dates">р. 1973</span><span class="with">↔ Catrami, Combustioni</span></div>
+          <p>„Torch works“, катранени картини; изложба <a href="https://theastergates.com/exhibitions/black-mystic"><em>Black Mystic</em></a>, Gagosian Le Bourget, 2024.</p>
+          <p class="diff">Покривни материали от битуменови полиестерни мати, споени с пламък и катран. Изложен е и казанът за катран на баща му, покривач. Катранът тук означава труд и семейна памет.</p>
+        </li>
+      </ul>
+      <div class="prose" style="margin-top:20px"><p>Разликата с Гейтс е най-полезна за разговор. Бури отказва да даде смисъл на материала и говори само за форма. Гейтс ползва същия материал именно заради смисъла му.</p></div>
+    </section>
+
+    <!-- 05 Въпроси -->
+    <section class="block" id="questions" data-name="Въпроси">
+      <div class="sec-head">
+        <span class="sec-num">05</span>
+        <h2>Въпроси за гледане</h2>
+      </div>
+      <ol class="questions">
+        <li>В коя творба няма нито една линия, начертана с четка? Откъде тогава идва рисунката: шев, ръб, пукнатина, заварка?</li>
+        <li>Кое е решил Бури и кое е решил материалът? Покажете границата върху една конкретна творба.</li>
+        <li>Как се променя цветът, когато той е свойство на материала (зебло, стомана, катран), а не боя върху него?</li>
+        <li>Ако се обърне картината, какво ще видим отзад? При <em>Lo strappo</em>, Gobbi и Ferri гърбът е част от творбата.</li>
+      </ol>
+    </section>
+
+    <!-- 06 Източници -->
+    <section class="block" id="sources" data-name="Източници">
+      <div class="sec-head">
+        <span class="sec-num">06</span>
+        <h2>Източници</h2>
+      </div>
+      <div class="sources">
+        <div>
+          <h3 class="label">Музеи и фондации</h3>
+          <ul>
+            <li><a href="https://fondazioneburri.org/en/?p=581">Fondazione Palazzo Albizzini Collezione Burri, биография</a></li>
+            <li><a href="https://fondazioneburri.org/en/external-works/grande-cretto-gibellina/">Fondazione Burri, Grande Cretto di Gibellina</a></li>
+            <li><a href="https://fondazioneburri.org/en/fondazione-palazzo-albizzini-collezione-burri/ex-seccatoi-del-tabacco/">Fondazione Burri, Ex Seccatoi del Tabacco</a></li>
+            <li><a href="https://fondazioneburri.org/en/fondazione-palazzo-albizzini-collezione-burri/palazzo-albizzini/">Fondazione Burri, Palazzo Albizzini</a></li>
+            <li><a href="https://www.guggenheim.org/wp-content/uploads/2019/12/guggenheim-teaching-materials-alberto-burri.pdf">Solomon R. Guggenheim Museum, <em>Alberto Burri: The Trauma of Painting</em>, Teacher Resource Unit, 2015</a>. Оттук са описите на техниките и част от изображенията (музеят ги дава за учебна употреба).</li>
+            <li><a href="https://www.guggenheim.org/artwork/artist/alberto-burri">Guggenheim, страница на автора</a>, <a href="https://www.guggenheim.org/artwork/718">Legno e bianco 1</a>, <a href="https://www.guggenheim.org/artwork/719">Grande ferro M 4</a>, <a href="https://www.guggenheim.org/artwork/720">Cellotex LA 86</a></li>
+            <li><a href="https://www.centrepompidou.fr/fr/ressources/oeuvre/cByXao">Centre Pompidou, Plastica, 1964</a> (анализ на Anne Malherbe, 2007) и <a href="https://www.centrepompidou.fr/fr/ressources/oeuvre/cEnX4Mb">Grande cretto nero, 1977</a></li>
+            <li><a href="https://www.tate.org.uk/art/artworks/burri-sacking-and-red-t00787">Tate, Sacking and Red, 1954</a></li>
+            <li><a href="https://www.museivaticani.va/content/museivaticani/en/collezioni/musei/collezione-d_arte-contemporanea/sala-24--il-secondo-dopoguerra-in-italia/alberto-burri--natura-morta--catrame-ii.html">Ватикански музеи, Catrame II, 1949</a></li>
+            <li><a href="https://www.artic.edu/artworks/159630">Art Institute of Chicago, Mold (Muffa), 1952</a></li>
+            <li><a href="https://www.moma.org/collection/works/78364">MoMA, Piero Manzoni, Achrome, 1958–1959</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="label">Каталог, критика, други</h3>
+          <ul>
+            <li>Emily Braun, Megan Fontanella, Carol Stringari, <em>Alberto Burri: The Trauma of Painting</em>, New York: Guggenheim Museum, 2015. Основният каталог с техническо проучване. <span class="warn">⚠ Цитиран чрез учебния материал на музея.</span></li>
+            <li><a href="https://studiointernational.com/images/articles/b/burri-alberto-2015/AlbertoBurri-captions.txt">Етикети на творбите от ретроспективата, 2015 (Studio International)</a></li>
+            <li><a href="https://momus.ca/2014/10/15/an-italian-futurist-out-of-step-with-the-rest-salvatore-scarpitta/">Momus, рецензия за Скарпита, 2014</a></li>
+            <li><a href="https://theastergates.com/exhibitions/black-mystic">Theaster Gates, <em>Black Mystic</em>, 2024</a></li>
+            <li><a href="https://mazzoleniart.com/wp-content/uploads/2017/06/Mazzoleni-Masterpiece-_Press-Release_20-June_Final.pdf">Mazzoleni, прессъобщение за Gobbo 1968</a> (галерия, вторичен източник)</li>
+            <li><a href="https://commons.wikimedia.org/wiki/File:Cretto_di_Burri_02.JPG">Wikimedia Commons, Cretto di Burri 02</a> (снимка, CC BY-SA 4.0)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">Изображенията на творбите: © Fondazione Palazzo Albizzini Collezione Burri, Чита ди Кастело / SIAE. Само за учебна употреба.</div>
+</footer>
+
+<a class="totop" id="totop" href="#top">↑ Нагоре</a>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Увеличено изображение">
+  <span class="lb-count" id="lb-count"></span>
+  <button class="lb-close" id="lb-close" aria-label="Затвори">×</button>
+  <button class="lb-prev" id="lb-prev" aria-label="Предишно изображение">‹</button>
+  <img id="lb-img" alt="">
+  <div class="lb-cap" id="lb-cap"></div>
+  <button class="lb-next" id="lb-next" aria-label="Следващо изображение">›</button>
+</div>
+
+<script>
+(function () {
+  // One record per cycle drives the contents, timeline, side navigation, section headers and pager.
+  // bars: [start, end, style]; "fade-end"/"fade-start" marks an approximate edge.
+  var CYCLES = [
+    { id: "catrami", name: "Catrami", bg: "катрани", years: "1948–1950", material: "катран, масло, пемза, PVA", op: "наслояване, издраскване", thumb: "img/01_catrame_II_1949.jpg", bars: [[1948, 1950]] },
+    { id: "muffe", name: "Muffe", bg: "плесени", years: "ок. 1950–1952", material: "масло, пемза, синтетична смола", op: "гранулиране на кората", thumb: "img/02_muffa_1952.jpg", bars: [[1950, 1952]] },
+    { id: "gobbi", name: "Gobbi", bg: "гърбици", years: "от 1950", material: "платно, пръчка или метален прът отзад", op: "изтласкване на равнината", thumb: null, bars: [[1950, 1954, "fade-end"], [1968, 1969.6]] },
+    { id: "sacchi", name: "Sacchi и Bianchi", bg: "чували и бели", years: "от 1949–1950", material: "зебло, ленено бельо, конец", op: "шиене, кърпене, разкъсване", thumb: "img/03_grande_sacco_1952.jpg", bars: [[1949, 1959, "fade-end"]] },
+    { id: "combustioni", name: "Combustioni", bg: "горения", years: "от 1953–1954", material: "хартия, зебло, PVA", op: "изгаряне", thumb: null, bars: [[1953, 1961, "fade-end"]] },
+    { id: "legni", name: "Legni", bg: "дървета", years: "средата на 1950-те", material: "фурнир", op: "горелка", thumb: "img/06_legno_e_bianco_1956.jpg", bars: [[1955, 1958, "fade-end"]] },
+    { id: "ferri", name: "Ferri", bg: "железа", years: "1958–1961", material: "студеновалцувана стомана", op: "рязане и заваряване", thumb: "img/08_grande_ferro_M4_1959.jpg", bars: [[1958, 1961]] },
+    { id: "plastiche", name: "Plastiche", bg: "пластмаси", years: "от 1961", material: "PVC, полиетилен", op: "топене с пламък", thumb: "img/09_rosso_plastica_M2_1962.jpg", bars: [[1961, 1966, "fade-end"]] },
+    { id: "cretti", name: "Cretti", bg: "пукнатини", years: "1970-те", material: "пигмент, каолин, PVA", op: "контролирано напукване", thumb: "img/11_grande_bianco_cretto_1974.jpg", bars: [[1971, 1980, "fade-start"]] },
+    { id: "grande-cretto", name: "Grande Cretto", bg: "Джибелина, Сицилия", years: "1985–2015", material: "бял бетон върху руини", op: "пукнатина в мащаба на град", thumb: "img/13_grande_cretto_gibellina.jpg", bars: [[1985, 1989, "ochre"]], arrow: "→ завършен 2015" },
+    { id: "cellotex", name: "Cellotex", bg: "изолационни плоскости", years: "1970-те–1993", material: "изолационна плоскост", op: "изрязване, обелване, боя", thumb: "img/14_cellotex_LA86_1986.jpg", bars: [[1972, 1993, "fade-start"]] }
+  ];
+  var TAGS = { fire: "огън", sew: "шев", mix: "смес", crack: "пукнатина", relief: "релеф", scratch: "драскане" };
+  var Y0 = 1945, Y1 = 1995;
+  function pct(y) { return ((y - Y0) / (Y1 - Y0) * 100).toFixed(2) + "%"; }
+  function num(i) { return (i + 1 < 10 ? "0" : "") + (i + 1); }
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+
+  var index = document.getElementById("index"), tl = document.getElementById("tl"), side = document.getElementById("sidenav");
+
+  CYCLES.forEach(function (c, i) {
+    var art = document.getElementById(c.id);
+    c.tags = art.getAttribute("data-tags").split(" ");
+    c.art = art;
+
+    // Section header: number, name, gloss + years, then the facts the reader scans for
+    var head = art.querySelector(".cyc-head");
+    head.innerHTML =
+      '<span class="cyc-num">03.' + (i + 1) + ' / ' + CYCLES.length + '</span>' +
+      '<h3>' + c.name + '</h3>' +
+      '<p class="cyc-sub">' + c.bg + ' · ' + c.years + '</p>' +
+      '<dl class="facts"><dt>Материал</dt><dd>' + c.material + '</dd><dt>Операция</dt><dd>' + c.op +
+      '</dd><dt>Група</dt><dd class="tg">' + c.tags.map(function (t) { return TAGS[t]; }).join(", ") + '</dd></dl>';
+
+    // Contents tile
+    var li = el("li");
+    li.innerHTML = '<a href="#' + c.id + '"><span class="thumb">' +
+      (c.thumb ? '<img src="' + c.thumb + '" alt="" loading="lazy">' : 'без изображение') +
+      '</span><span class="n">' + num(i) + '</span><span class="nm">' + c.name + '</span><span class="yr">' + c.years + '</span></a>';
+    index.appendChild(li);
+
+    // Side navigation
+    var sli = el("li"); sli.setAttribute("data-id", c.id);
+    sli.innerHTML = '<a href="#' + c.id + '"><span class="k">' + num(i) + '</span><span>' + c.name + '</span><span class="y">' + c.years + '</span></a>';
+    side.appendChild(sli);
+
+    // Timeline row
+    var row = el("div", "tl-row"); row.setAttribute("data-id", c.id);
+    row.setAttribute("role", "link"); row.tabIndex = 0; row.setAttribute("aria-label", c.name + ", " + c.years);
+    row.appendChild(el("div", "tl-label", c.name));
+    var track = el("div", "tl-track");
+    c.bars.forEach(function (b) {
+      var bar = el("div", "bar" + (b[2] ? " " + b[2] : ""));
+      bar.style.left = pct(b[0]);
+      bar.style.width = "calc(" + pct(b[1]) + " - " + pct(b[0]) + ")";
+      track.appendChild(bar);
+      if (c.arrow) { var a = el("span", "bar-arrow", c.arrow); a.style.left = "calc(" + pct(b[1]) + " + 8px)"; track.appendChild(a); }
+    });
+    row.appendChild(track);
+    function go() { reveal(c.id); art.scrollIntoView({ behavior: "smooth" }); }
+    row.addEventListener("click", go);
+    row.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+    tl.appendChild(row);
+
+    // Previous / next
+    var pager = el("nav", "pager"); pager.setAttribute("aria-label", "Съседни цикли");
+    if (i > 0) pager.appendChild(el("a", "prev", '← предишен<span>' + CYCLES[i - 1].name + '</span>')).href = "#" + CYCLES[i - 1].id;
+    if (i < CYCLES.length - 1) pager.appendChild(el("a", "next", 'следващ →<span>' + CYCLES[i + 1].name + '</span>')).href = "#" + CYCLES[i + 1].id;
+    else pager.appendChild(el("a", "next", 'нататък →<span>Съседи</span>')).href = "#neighbors";
+    art.appendChild(pager);
+  });
+
+  var axis = el("div", "tl-axis"); axis.appendChild(el("div"));
+  var ticks = el("div", "ticks");
+  for (var y = 1950; y <= 1990; y += 10) { var s = el("span", null, String(y)); s.style.left = pct(y); ticks.appendChild(s); }
+  axis.appendChild(ticks); tl.appendChild(axis);
+
+  // Filter by operation
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  function applyFilter(f) {
+    chips.forEach(function (ch) { ch.setAttribute("aria-pressed", ch.getAttribute("data-filter") === f ? "true" : "false"); });
+    CYCLES.forEach(function (c) {
+      var on = f === "all" || c.tags.indexOf(f) !== -1;
+      c.art.hidden = !on;
+      tl.querySelector('.tl-row[data-id="' + c.id + '"]').classList.toggle("dim", !on);
+      side.querySelector('li[data-id="' + c.id + '"]').classList.toggle("hidden", !on);
+    });
+    try { localStorage.setItem("burri-filter", f); } catch (e) {}
+  }
+  chips.forEach(function (ch) { ch.addEventListener("click", function () { applyFilter(ch.getAttribute("data-filter")); }); });
+  function reveal(id) { var c = document.getElementById(id); if (c && c.hidden) applyFilter("all"); }
+  // Any link to a hidden cycle clears the filter first, so links never lead to nothing.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest('a[href^="#"]');
+    if (a) reveal(a.getAttribute("href").slice(1));
+  });
+  try { var saved = localStorage.getItem("burri-filter"); if (saved && saved !== "all" && TAGS[saved]) applyFilter(saved); } catch (e) {}
+
+  // Where am I: breadcrumb, active links, progress bar, back-to-top
+  var crumb = document.getElementById("crumb"), progress = document.getElementById("progress"), totop = document.getElementById("totop");
+  var sections = Array.prototype.slice.call(document.querySelectorAll("section.block"));
+  var topLinks = Array.prototype.slice.call(document.querySelectorAll(".topnav a"));
+  var sideLinks = Array.prototype.slice.call(side.querySelectorAll("a"));
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var line = window.innerHeight * 0.3, sec = null, cyc = null;
+    sections.forEach(function (s) { if (s.getBoundingClientRect().top <= line) sec = s; });
+    if (sec && sec.id === "cycles") {
+      CYCLES.forEach(function (c) { if (!c.art.hidden && c.art.getBoundingClientRect().top <= line) cyc = c; });
+    }
+    crumb.innerHTML = sec ? (cyc ? sec.dataset.name + ' · <b>' + cyc.name + '</b>' : '<b>' + sec.dataset.name + '</b>') : "";
+    topLinks.forEach(function (a) { a.classList.toggle("active", !!sec && a.getAttribute("href") === "#" + sec.id); });
+    sideLinks.forEach(function (a) { a.classList.toggle("active", !!cyc && a.getAttribute("href") === "#" + cyc.id); });
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (h > 0 ? window.scrollY / h * 100 : 0) + "%";
+    totop.classList.toggle("show", window.scrollY > window.innerHeight * 1.2);
+  }
+  window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener("resize", update);
+  update();
+
+  // Image viewer: every figure, in page order, skipping filtered-out cycles
+  var figs = Array.prototype.slice.call(document.querySelectorAll("figure[id]"));
+  var lb = document.getElementById("lb"), lbImg = document.getElementById("lb-img"), lbCap = document.getElementById("lb-cap"), lbCount = document.getElementById("lb-count");
+  var cur = 0, lastFocus = null;
+  function visible() { return figs.filter(function (f) { return !f.closest("article[hidden]"); }); }
+  function show(i) {
+    var list = visible(); if (!list.length) return;
+    cur = (i + list.length) % list.length;
+    var f = list[cur], img = f.querySelector("img");
+    lbImg.src = img.getAttribute("src"); lbImg.alt = img.alt;
+    lbCap.innerHTML = f.querySelector("figcaption").innerHTML;
+    lbCount.textContent = (cur + 1) + " / " + list.length;
+  }
+  function open(f) {
+    lastFocus = document.activeElement;
+    show(Math.max(0, visible().indexOf(f)));
+    lb.classList.add("open"); document.body.style.overflow = "hidden";
+    document.getElementById("lb-close").focus();
+  }
+  function close() { lb.classList.remove("open"); document.body.style.overflow = ""; if (lastFocus) lastFocus.focus(); }
+  figs.forEach(function (f) { f.querySelector("button").addEventListener("click", function () { open(f); }); });
+  document.getElementById("lb-close").addEventListener("click", close);
+  document.getElementById("lb-prev").addEventListener("click", function () { show(cur - 1); });
+  document.getElementById("lb-next").addEventListener("click", function () { show(cur + 1); });
+  lb.addEventListener("click", function (e) { if (e.target === lb) close(); });
+  document.addEventListener("keydown", function (e) {
+    if (!lb.classList.contains("open")) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowLeft") show(cur - 1);
+    if (e.key === "ArrowRight") show(cur + 1);
+  });
+  var x0 = null;
+  lb.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener("touchend", function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+})();
+</script>
+</body>
+</html>
